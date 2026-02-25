@@ -61,7 +61,7 @@ export default function FormikForm() {
     const token="Admin-wwppwpwpwpwpwoeoeoe32kd"
     const role="Admin"
       loginUser({email,name,token,role})
-     router.push("/admine")
+     router.push("/admin")
       }else if (email === isUserExist.email && password === isUserExist.password && isUserExist.role==="User") {
     const token="User-wwppwpwpwpwpwoeoeoe32kd"
     const role="User"
