@@ -1,5 +1,7 @@
 "use client";
 import axios from "axios";
+import Link from "next/link";
+
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
@@ -15,6 +17,7 @@ function App() {
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [input, setInput] = useState("");
+  // const router = useRouter();
 
   const [debouncedValue] = useDebounce(input, 700);
 
@@ -23,7 +26,19 @@ function App() {
     price: { min: "", max: "" },
     rating: "",
   });
+  const hasFilter = Object.values(filters).some((value) => {
+    if (Array.isArray(value)) {
+      return value.length > 0; // category
+    }
 
+    if (typeof value === "object") {
+      return value.min !== "" || value.max !== ""; // price
+    }
+
+    return value !== ""; // rating
+  });
+  console.log("filter", hasFilter);
+  console.log("o", Object.values(filters));
   const categories = ["beauty", "fragrances", "groceries", "furniture"];
 
   /* ================= FETCH PRODUCTS ================= */
@@ -59,11 +74,11 @@ function App() {
   ) => {
     let filtered = [...allProducts];
 
-   if (category.length > 0) {
-    filtered = filtered.filter((product) =>
-      category.includes(product.category)
-    );
-  }
+    if (category.length > 0) {
+      filtered = filtered.filter((product) =>
+        category.includes(product.category),
+      );
+    }
 
     if (min && max) {
       filtered = filtered.filter(
@@ -95,27 +110,27 @@ function App() {
   const handleCategoryFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-   setFilter((prev) => {
-    const alreadySelected = prev.category.includes(value);
+    setFilter((prev) => {
+      const alreadySelected = prev.category.includes(value);
 
-    const updatedCategories = alreadySelected
-      ? prev.category.filter((cat) => cat !== value)
-      : [...prev.category, value];
- applyFilter(
-      updatedCategories,
-      prev.price.min,
-      prev.price.max,
-      prev.rating
-    );
-    return {
-      ...prev,
-      category: updatedCategories,
-    };
-  });
+      const updatedCategories = alreadySelected
+        ? prev.category.filter((cat) => cat !== value)
+        : [...prev.category, value];
+      applyFilter(
+        updatedCategories,
+        prev.price.min,
+        prev.price.max,
+        prev.rating,
+      );
+      return {
+        ...prev,
+        category: updatedCategories,
+      };
+    });
 
     //applyFilter(category, filters.price.min, filters.price.max, filters.rating);
   };
-console.log(filters)
+  // console.log(filters);
   /* ================= RATING FILTER ================= */
 
   const handleRatingFilter = (e: any) => {
@@ -131,7 +146,7 @@ console.log(filters)
 
   const clearFilters = () => {
     setFilter({
-      category:[],
+      category: [],
       price: { min: "", max: "" },
       rating: "",
     });
@@ -258,7 +273,7 @@ console.log(filters)
           </div>
           {/* CLEAR FILTERS */}
 
-          {
+          {hasFilter && (
             <div className="mt-6">
               <button
                 onClick={clearFilters}
@@ -267,7 +282,7 @@ console.log(filters)
                 Clear Filters
               </button>
             </div>
-          }
+          )}
         </div>
 
         {/* PRODUCTS */}
@@ -280,60 +295,71 @@ console.log(filters)
                   No Products Found
                 </p>
 
-                <button
-                  onClick={clearFilters}
-                  className="mt-4 bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition"
-                >
-                  Clear Filters
-                </button>
+                {hasFilter && (
+                  <button
+                    onClick={clearFilters}
+                    className="mt-4 bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition"
+                  >
+                    Clear Filters
+                  </button>
+                )}
               </div>
             ) : (
               products.map((product) => (
-                <div
+                <Link
                   key={product.id}
-                  className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-3 border"
+                  href={`/product/${product.title
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}/${product.id}`}
                 >
-                  {product.discountPercentage > 5 && (
-                    <div className="absolute bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                      {Math.round(product.discountPercentage)}% OFF
+                  <div
+                    key={product.id}
+                    className=" cursor-pointer hover:scale-105 transition bg-white rounded-xl shadow-sm hover:shadow-md transition p-3 border"
+                  >
+                    {product.discountPercentage > 5 && (
+                      <div className="absolute bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                        {Math.round(product.discountPercentage)}% OFF
+                      </div>
+                    )}
+
+                    <div className="h-36 flex items-center justify-center mb-3">
+                      <img
+                        src={product.images[0]}
+                        alt={product.title}
+                        className="h-full object-contain"
+                      />
                     </div>
-                  )}
 
-                  <div className="h-36 flex items-center justify-center mb-3">
-                    <img
-                      src={product.images[0]}
-                      alt={product.title}
-                      className="h-full object-contain"
-                    />
-                  </div>
+                    <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
+                      {product.title}
+                    </h3>
 
-                  <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
-                    {product.title}
-                  </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {product.stock}
+                    </p>
 
-                  <p className="text-xs text-gray-500 mt-1">{product.stock}</p>
-
-                  <div className="flex items-center justify-between mt-3">
-                    <div>
-                      <p className="text-base font-bold text-gray-900">
-                        ${product.price}
-                      </p>
-                      {product.discountPercentage > 5 && (
-                        <p className="text-xs text-gray-400 line-through">
-                          $
-                          {(
-                            product.price /
-                            (1 - product.discountPercentage / 100)
-                          ).toFixed(2)}
+                    <div className="flex items-center justify-between mt-3">
+                      <div>
+                        <p className="text-base font-bold text-gray-900">
+                          ${product.price}
                         </p>
-                      )}
-                    </div>
+                        {product.discountPercentage > 5 && (
+                          <p className="text-xs text-gray-400 line-through">
+                            $
+                            {(
+                              product.price /
+                              (1 - product.discountPercentage / 100)
+                            ).toFixed(2)}
+                          </p>
+                        )}
+                      </div>
 
-                    <button className="border border-green-600 text-green-600 px-4 py-1 text-sm font-semibold rounded-lg hover:bg-green-600 hover:text-white transition">
-                      ADD
-                    </button>
+                      <button className="border border-green-600 text-green-600 px-4 py-1 text-sm font-semibold rounded-lg hover:bg-green-600 hover:text-white transition">
+                        ADD
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))
             )}
           </div>
