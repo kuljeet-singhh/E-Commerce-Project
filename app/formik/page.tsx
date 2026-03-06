@@ -2,15 +2,27 @@
 import { useFormik } from "formik";
 import { FormValue } from "../interface/interface";
 import * as Yup from "yup";
-import {  useRouter } from "next/navigation";
-import {  loginUser} from "../utils/auth";
-import Data from "../Data";
-import { useAuth } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
+import { getUser, loginUser} from "../utils/auth";
+import { useEffect } from "react";
 
 
 export default function FormikForm() {
   const router = useRouter();
- const{setUser}=useAuth()
+    useEffect (()=>{
+         const loggedUser=getUser();
+         console.log(loggedUser)
+         if(!loggedUser)
+          return
+        console.log("dededed")
+          if(loggedUser){
+             router.push("/dashboard") 
+             return;
+          }else{
+             router.push("/formik")
+             return ;
+          }
+      },[router])
   
   const formik = useFormik<FormValue>({
     initialValues: {
@@ -33,44 +45,14 @@ export default function FormikForm() {
 
   const handleSubmit=(values:FormValue)=>{
     const email=values.email;
-    const name=values.name
-    const password= values.password
-
-    const isUserExist=Data.find((user)=>{
-      // console.log(user.email)
-      return user.email === email;
-    })
-     if(isUserExist){
-     if (email === isUserExist.email && password === isUserExist.password && isUserExist.role==="Admin") {
-    const token="Admin-wwppwpwpwpwpwoeoeoe32kd"
-    const role="Admin"
-      loginUser({email,name,token,role})
-      setUser({ email, name, token, role });
-     router.push("/admin")
-      }else if (email === isUserExist.email && password === isUserExist.password && isUserExist.role==="User") {
-    const token="User-wwppwpwpwpwpwoeoeoe32kd"
-    const role="User"
-      loginUser({email,name,token,role})
-      setUser({ email, name, token, role });
-     router.push("/")
-      }else if (email === isUserExist.email && password === isUserExist.password && isUserExist.role==="Manager") {
-    const token="Manager-wwppwpwpwpwpwoeoeoe32kd"
-    const role="Manager"
-      loginUser({email,name,token,role})
-      setUser({ email, name, token, role });
-     router.push("/manager")
-      }
-      
-      
-      else{
+    const name=values.name;
+    const token="wwppwpwpwpwpwoeoeoe32kd"
+     if (values.email === "kuljeet.pixlerlab@gmail.com" && values.password === "123") {
+     loginUser({email,name,token})
+     router.push("/dashboard")
+      }else{
         alert("Invalid credentials")
       }
-    }
-     else{
-        alert(" User not found ")
-      }
-      
-
   }
 
   return (

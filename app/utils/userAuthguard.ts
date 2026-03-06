@@ -28,7 +28,7 @@ export default function useAuthGuard(allowedRoles: string[]) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setUser(loggedUser);
     setLoading(false);
-  }, [allowedRoles, router]);
+  }, []);
 
   return { user, loading };
 }

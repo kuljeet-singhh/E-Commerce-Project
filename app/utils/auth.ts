@@ -13,8 +13,9 @@ export const loginUser = (user: User) => {
 // console.log("user",user)
 };
 export const getUser = (): User | null => {
+      if (typeof window === "undefined") return null;
     const data = localStorage?.getItem(USER_KEY)
- console.log("data",data)
+//  console.log("data",data)
     return data ? JSON.parse(data) : null;
    
 };

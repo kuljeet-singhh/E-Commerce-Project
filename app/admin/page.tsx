@@ -6,22 +6,6 @@ import useAuthGuard from "../utils/userAuthguard";
 
 export default function Admine() {
   const router = useRouter();
-  // const [user, setUser] = useState<User | null>(null);
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   const loggedUser = getUser();
-  //   if (!loggedUser) {
-  //     router.replace("/loginForm");
-  //   }else   if (loggedUser.role !== "Admin") {
-  //   router.replace("/user"); // or "/manager" based on role
-  //   return;
-  // }
-  //    else {
-  //     setUser(loggedUser);
-  //   }
-  //   setLoading(false);
-  // }, [router]);
 
   const handleLogout = () => {
     logoutUser();
