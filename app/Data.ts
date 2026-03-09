@@ -23,6 +23,16 @@ const Data = [
     lastName: "singh",
     role: "Manager",
   },
+  {
+    id:4,
+    email:"kuljeetsing@gmail.com",
+    password: "kuljeet",
+    firstName:"kuljeet",
+    lastName:"singh",
+    role:"user"
+
+  }
 ];
+
 
 export default Data;

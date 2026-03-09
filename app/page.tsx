@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
+import { UseCart } from "./context/CartContext";
 
 type FilterType = {
   category: string[];
@@ -17,6 +18,8 @@ function App() {
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [input, setInput] = useState("");
+  const { addToCart,removeFromCart, cart } = UseCart();
+  const cartItem = cart.find((item) => item.id === products?.id);
   // const router = useRouter();
 
   const [debouncedValue] = useDebounce(input, 700);
@@ -306,15 +309,15 @@ function App() {
               </div>
             ) : (
               products.map((product) => (
-                <Link
+                <div
                   key={product.id}
-                  href={`/product/${product.title
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")}/${product.id}`}
+                  className=" cursor-pointer hover:scale-105 transition bg-white rounded-xl shadow-sm hover:shadow-md transition p-3 border"
                 >
-                  <div
+                  <Link
                     key={product.id}
-                    className=" cursor-pointer hover:scale-105 transition bg-white rounded-xl shadow-sm hover:shadow-md transition p-3 border"
+                    href={`/product/${product.title
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}/${product.id}`}
                   >
                     {product.discountPercentage > 5 && (
                       <div className="absolute bg-blue-600 text-white text-xs px-2 py-1 rounded">
@@ -337,29 +340,41 @@ function App() {
                     <p className="text-xs text-gray-500 mt-1">
                       {product.stock}
                     </p>
-
-                    <div className="flex items-center justify-between mt-3">
-                      <div>
-                        <p className="text-base font-bold text-gray-900">
-                          ${product.price}
+                  </Link>
+                  <div className="flex items-center justify-between mt-3">
+                    <div>
+                      <p className="text-base font-bold text-gray-900">
+                        ${product.price}
+                      </p>
+                      {product.discountPercentage > 5 && (
+                        <p className="text-xs text-gray-400 line-through">
+                          $
+                          {(
+                            product.price /
+                            (1 - product.discountPercentage / 100)
+                          ).toFixed(2)}
                         </p>
-                        {product.discountPercentage > 5 && (
-                          <p className="text-xs text-gray-400 line-through">
-                            $
-                            {(
-                              product.price /
-                              (1 - product.discountPercentage / 100)
-                            ).toFixed(2)}
-                          </p>
-                        )}
-                      </div>
+                      )}
+                    </div>
 
-                      <button className="border border-green-600 text-green-600 px-4 py-1 text-sm font-semibold rounded-lg hover:bg-green-600 hover:text-white transition">
+                    {!cartItem ? (
+                      <button
+                        onClick={() => addToCart(product)}
+                        className="border border-green-600 text-green-600 px-4 py-1 text-sm font-semibold rounded-lg hover:bg-green-600 hover:text-white transition"
+                      >
                         ADD
                       </button>
-                    </div>
+                    ) : (
+                      <div className="flex items-center gap-3 border border-green-600 rounded-lg px-3 py-1">
+                        <button onClick={() => removeFromCart(product.id)}>
+                          -
+                        </button>
+                        <span className="font-bold">{cartItem.quantity}</span>
+                        <button onClick={() => addToCart(product)}>+</button>
+                      </div>
+                    )}
                   </div>
-                </Link>
+                </div>
               ))
             )}
           </div>

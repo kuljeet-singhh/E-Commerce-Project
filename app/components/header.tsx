@@ -4,6 +4,7 @@ import { logoutUser } from "../utils/auth";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 
+import CartIcon from "./CartBtn";
 export default function Header() {
   const { user, setUser } = useAuth();
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-slate-900 text-white shadow-md">
+    <header className="bg-slate-900 text-white shadow-md sticky">
       <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <h1 className="text-2xl font-bold tracking-wide">
@@ -52,6 +53,9 @@ export default function Header() {
               Login
             </Link>
           )}
+      <Link href="/Cart">
+      <CartIcon  />
+      </Link>  
         </div>
       </div>
     </header>
