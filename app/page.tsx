@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { UseCart } from "./context/CartContext";
+import Category from "./components/category";
+import { useSearch } from "./context/SearchContext";
 
 type FilterType = {
   category: string[];
@@ -18,11 +20,12 @@ function App() {
   const [allProducts, setAllProducts] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [input, setInput] = useState("");
-  const { addToCart,removeFromCart, cart } = UseCart();
+  const { addToCart, removeFromCart, cart } = UseCart();
+  const {search }=useSearch();
   const cartItem = cart.find((item) => item.id === products?.id);
   // const router = useRouter();
 
-  const [debouncedValue] = useDebounce(input, 700);
+  const [debouncedValue] = useDebounce(search, 700);
 
   const [filters, setFilter] = useState<FilterType>({
     category: [],
@@ -53,7 +56,7 @@ function App() {
         setError("");
 
         const response = await axios.get(
-          `https://dummyjson.com/products/search?q=${debouncedValue}&limit=105`,
+          `https://dummyjson.com/products/search?q=${debouncedValue}&limit=0`,
         );
 
         setAllProducts(response.data.products);
@@ -159,30 +162,30 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-5 font-sans">
-      <h1 className="text-center text-3xl font-bold text-gray-800 mb-8">
+      {/* <h1 className="text-center text-3xl font-bold text-gray-800 mb-8">
         Product List
-      </h1>
-
+      </h1> */}
+   
       {/* SEARCH */}
-      <div className="flex justify-center mb-8">
-        <div className="relative w-[400px] max-w-[90%]">
+      {/* <div className="flex justify-center mb-8 w-[90%] ">
+        <div className="relative w-[90%] ">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg">
             🔍
           </span>
 
           <input
-            className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-gray-200 text-base outline-none bg-white shadow-md"
+            className="w-full  max-w-[90%] pl-12 pr-4 py-3 rounded-full border-2 border-gray-200 text-base outline-none bg-white shadow-md"
             placeholder="Search products..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
           />
         </div>
-      </div>
+      </div> */}
 
       <div className="flex gap-6">
         {/* SIDEBAR */}
 
-        <div className="w-72 bg-white rounded-xl shadow-sm p-5 h-fit sticky top-5">
+        <div className="w-72 bg-white rounded-xl shadow-sm p-5 h-fit sticky top-40">
           {/* CATEGORY */}
 
           <div className="mb-6">
@@ -309,23 +312,90 @@ function App() {
               </div>
             ) : (
               products.map((product) => (
+                // <div
+                //   key={product.id}
+                //   className=" cursor-pointer hover:scale-105 transition bg-white rounded-xl shadow-sm hover:shadow-md transition p-3 border"
+                // >
+                //   <Link
+                //     key={product.id}
+                //     href={`/product/${product.title
+                //       .toLowerCase()
+                //       .replace(/\s+/g, "-")}/${product.id}`}
+                //   >
+                //     {product.discountPercentage > 5 && (
+                //       <div className="absolute bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                //         {Math.round(product.discountPercentage)}% OFF
+                //       </div>
+                //     )}
+
+                //     <div className="h-36 flex items-center justify-center mb-3">
+                //       <img
+                //         src={product.images[0]}
+                //         alt={product.title}
+                //         className="h-full object-contain"
+                //       />
+                //     </div>
+
+                //     <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
+                //       {product.title}
+                //     </h3>
+
+                //     <p className="text-xs text-gray-500 mt-1">
+                //       {product.stock}
+                //     </p>
+                //   </Link>
+                //   <div className="flex items-center justify-between mt-3">
+                //     <div>
+                //       <p className="text-base font-bold text-gray-900">
+                //         ${product.price}
+                //       </p>
+                //       {product.discountPercentage > 5 && (
+                //         <p className="text-xs text-gray-400 line-through">
+                //           $
+                //           {(
+                //             product.price /
+                //             (1 - product.discountPercentage / 100)
+                //           ).toFixed(2)}
+                //         </p>
+                //       )}
+                //     </div>
+
+                //     {!cartItem ? (
+                //       <button
+                //         onClick={() => addToCart(product)}
+                //         className="border border-green-600 text-green-600 px-4 py-1 text-sm font-semibold rounded-lg hover:bg-green-600 hover:text-white transition"
+                //       >
+                //         ADD
+                //       </button>
+                //     ) : (
+                //       <div className="flex items-center gap-3 border border-green-600 rounded-lg px-3 py-1">
+                //         <button onClick={() => removeFromCart(product.id)}>
+                //           -
+                //         </button>
+                //         <span className="font-bold">{cartItem.quantity}</span>
+                //         <button onClick={() => addToCart(product)}>+</button>
+                //       </div>
+                //     )}
+                //   </div>
+                // </div>
                 <div
                   key={product.id}
-                  className=" cursor-pointer hover:scale-105 transition bg-white rounded-xl shadow-sm hover:shadow-md transition p-3 border"
+                  className="relative bg-white border rounded-lg p-3 hover:shadow-lg transition"
                 >
+                  {/* Discount Badge */}
+                  {product.discountPercentage > 5 && (
+                    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                      {Math.round(product.discountPercentage)}% OFF
+                    </span>
+                  )}
+
                   <Link
-                    key={product.id}
                     href={`/product/${product.title
                       .toLowerCase()
                       .replace(/\s+/g, "-")}/${product.id}`}
                   >
-                    {product.discountPercentage > 5 && (
-                      <div className="absolute bg-blue-600 text-white text-xs px-2 py-1 rounded">
-                        {Math.round(product.discountPercentage)}% OFF
-                      </div>
-                    )}
-
-                    <div className="h-36 flex items-center justify-center mb-3">
+                    {/* Image */}
+                    <div className="h-40 flex items-center justify-center mb-3">
                       <img
                         src={product.images[0]}
                         alt={product.title}
@@ -333,19 +403,24 @@ function App() {
                       />
                     </div>
 
-                    <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
+                    {/* Title */}
+                    <h3 className="text-sm font-medium text-gray-800 line-clamp-2">
                       {product.title}
                     </h3>
 
-                    <p className="text-xs text-gray-500 mt-1">
-                      {product.stock}
+                    {/* Rating */}
+                    <p className="text-xs text-yellow-600 mt-1">
+                      ⭐ {product.rating} rating
                     </p>
                   </Link>
+
+                  {/* Price + Cart */}
                   <div className="flex items-center justify-between mt-3">
                     <div>
-                      <p className="text-base font-bold text-gray-900">
+                      <p className="text-lg font-bold text-gray-900">
                         ${product.price}
                       </p>
+
                       {product.discountPercentage > 5 && (
                         <p className="text-xs text-gray-400 line-through">
                           $
@@ -357,22 +432,12 @@ function App() {
                       )}
                     </div>
 
-                    {!cartItem ? (
-                      <button
-                        onClick={() => addToCart(product)}
-                        className="border border-green-600 text-green-600 px-4 py-1 text-sm font-semibold rounded-lg hover:bg-green-600 hover:text-white transition"
-                      >
-                        ADD
-                      </button>
-                    ) : (
-                      <div className="flex items-center gap-3 border border-green-600 rounded-lg px-3 py-1">
-                        <button onClick={() => removeFromCart(product.id)}>
-                          -
-                        </button>
-                        <span className="font-bold">{cartItem.quantity}</span>
-                        <button onClick={() => addToCart(product)}>+</button>
-                      </div>
-                    )}
+                    <button
+                      onClick={() => addToCart(product)}
+                      className="bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-semibold px-3 py-1 rounded"
+                    >
+                      Add
+                    </button>
                   </div>
                 </div>
               ))

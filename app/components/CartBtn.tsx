@@ -17,11 +17,11 @@ export default function CartIcon() {
       </span> */}
 
       {/* Cart Count */}
-      {count > 0 && (
+      <div>{count > 0 && (
         <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs font-bold px-1.5 py-0.5 rounded-full">
           {count}
         </span>
-      )}
+      )}</div>
     </div>
   );
 }

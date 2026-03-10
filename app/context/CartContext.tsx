@@ -23,7 +23,7 @@ const [cart, setCart] = useState<CartItem[]>(() => {
       const storedCart = localStorage.getItem("cart");
       return storedCart ? JSON.parse(storedCart) : [];
     }
-    return [];
+    return [0];
   });
 
    useEffect(() => {
