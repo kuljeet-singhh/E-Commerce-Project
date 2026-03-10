@@ -32,7 +32,7 @@ export default function Header() {
 
           {/* SEARCH */}
           <div className="flex flex-1 items-center">
-            {(pathname !== "/Cart" && pathname !== "/user" && !pathname.startsWith("/product") ) && 
+            {(pathname !== "/Cart" && pathname !== "/user" && !pathname.startsWith("/product")&& pathname!=="/loginForm" ) && 
               <div className="flex w-full rounded-md overflow-hidden">
                 <input
                   type="text"

@@ -204,7 +204,7 @@ export default function Cart() {
 
                   </div>
 
-                  {/* Amazon style actions */}
+                
                   <button className="text-sm text-blue-600 hover:underline">
                     Delete
                   </button>
@@ -225,7 +225,7 @@ export default function Cart() {
         </div>
 
         {/* RIGHT SUBTOTAL BOX */}
-       <div className="bg-white p-6 h-fit sticky top-6 border shadow-sm rounded-md">
+       <div className="bg-white p-6 h-fit sticky top-30 border shadow-sm rounded-md">
 
           <p className="text-lg">
             Subtotal ({totalItems} items):
